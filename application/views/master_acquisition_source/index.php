@@ -12,62 +12,64 @@
   $th_p       = 'text-theme-xs font-medium text-gray-500 dark:text-gray-400';
 ?>
 
-<div x-data="masterAcquisitionSourceCrud()" class="space-y-5 sm:space-y-6">
-  <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3">
-    <div class="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5">
-      <h3 class="text-base font-medium text-gray-800 dark:text-white/90">Daftar Sumber Perolehan Aset</h3>
+<div x-data="masterAcquisitionSourceCrud()" class="content">
+  <div class="card">
+    <div class="toolbar">
+      <h3>Daftar Sumber Perolehan Aset</h3>
 
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <input type="text" x-model.debounce.200ms="query" @input="page = 1" placeholder="Cari Sumber Perolehan Aset..." class="<?= $input_cls ?> sm:w-64"/>
-        <button type="button" @click="openCreate()" class="bg-brand-500 shadow-theme-xs hover:bg-brand-600 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-white transition">
-          <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 3.75C10.4142 3.75 10.75 4.08579 10.75 4.5V9.25H15.5C15.9142 9.25 16.25 9.58579 16.25 10C16.25 10.4142 15.9142 10.75 15.5 10.75H10.75V15.5C10.75 15.9142 10.4142 16.25 10 16.25C9.58579 16.25 9.25 15.9142 9.25 15.5V10.75H4.5C4.08579 10.75 3.75 10.4142 3.75 10C3.75 9.58579 4.08579 9.25 4.5 9.25H9.25V4.5C9.25 4.08579 9.58579 3.75 10 3.75Z" fill=""/></svg>
+      <div class="toolbar-actions">
+        <input type="text" x-model.debounce.200ms="query" @input="page = 1" placeholder="Cari Sumber Perolehan Aset..." class="search"/>
+        <button type="button" @click="openCreate()" class="primary-button">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 3.75C10.4142 3.75 10.75 4.08579 10.75 4.5V9.25H15.5C15.9142 9.25 16.25 9.58579 16.25 10C16.25 10.4142 15.9142 10.75 15.5 10.75H10.75V15.5C10.75 15.9142 10.4142 16.25 10 16.25C9.58579 16.25 9.25 15.9142 9.25 15.5V10.75H4.5C4.08579 10.75 3.75 10.4142 3.75 10C3.75 9.58579 4.08579 9.25 4.5 9.25H9.25V4.5C9.25 4.08579 9.58579 3.75 10 3.75Z" fill=""/></svg>
           Tambah Sumber Perolehan Aset
         </button>
       </div>
 
     </div>
 
-    <div class="border-t border-gray-100 p-5 sm:p-6 dark:border-gray-800">
-      <div class="relative overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3">
+    <div class="table-section">
+      <div class="table-card">
 
         <!-- datatables -->
-        <div class="custom-scrollbar max-w-full overflow-x-auto">
-          <table class="w-full min-w-275.5">
+        <div class="custom-scrollbar table-scroll">
+          <table class="table">
             <thead>
-              <tr class="border-b border-gray-100 dark:border-gray-800">
-                <th class="<?= $th_cls ?>"><p class="<?= $th_p ?>">Nama Sumber Perolehan Aset</p></th>
-                <th class="<?= $th_cls ?>"><p class="<?= $th_p ?>">Deskripsi</p></th>
-                <th class="<?= $th_cls ?>"><p class="<?= $th_p ?>">Aksi</p></th>
+              <tr>
+                <th><p>Nama Sumber Perolehan Aset</p></th>
+                <th><p>Deskripsi</p></th>
+                <th><p>Aksi</p></th>
               </tr>
             </thead>
             <tbody>
               <?php $this->load->view('master_acquisition_source/_rows', array('rows' => $rows)); ?>
 
               <tr x-show="filteredCount === 0" x-cloak>
-                <td colspan="3" class="px-5 py-8 text-center text-theme-sm text-gray-500 sm:px-6 dark:text-gray-400">Data sumber perolehan aset tidak ditemukan.</td>
+                <td colspan="3" class="empty">Data Sumber Perolehan Aset tidak ditemukan.</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <!-- animasi load datatables -->
-        <div x-show="tableLoading" x-cloak class="absolute inset-0 z-10 flex items-center justify-center gap-3 bg-white/75 text-sm font-medium text-gray-700 dark:bg-gray-900/75 dark:text-gray-200">
-          <span class="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-brand-500"></span>
+        <div x-show="tableLoading" x-cloak class="loading">
+          <span class="spinner"></span>
           Memuat data tabel...
         </div>
 
       </div>
 
       <!-- pagination -->
-      <div class="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row" x-show="filteredCount > 0">
-        <p class="text-theme-sm text-gray-500 dark:text-gray-400">
-          Menampilkan <span x-text="from"></span>&ndash;<span x-text="to"></span> dari <span x-text="filteredCount"></span> data
+      <div class="pagination" x-show="filteredCount > 0">
+        <p class="muted">
+          Menampilkan 
+          <span x-text="from"></span>&ndash;<span x-text="to"></span> 
+          dari <span x-text="filteredCount"></span> data
         </p>
 
-        <div class="flex items-center gap-2">
-          <button type="button" @click="prev()" :disabled="page <= 1" class="text-theme-sm shadow-theme-xs rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/3">Sebelumnya</button>
-          <span class="text-theme-sm text-gray-500 dark:text-gray-400"><span x-text="page"></span> / <span x-text="totalPages"></span></span>
-          <button type="button" @click="next()" :disabled="page >= totalPages" class="text-theme-sm shadow-theme-xs rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/3">Berikutnya</button>
+        <div class="pagination-controls">
+          <button type="button" @click="prev()" :disabled="page <= 1" class="secondary-button">Sebelumnya</button>
+          <span class="muted"><span x-text="page"></span> / <span x-text="totalPages"></span></span>
+          <button type="button" @click="next()" :disabled="page >= totalPages" class="secondary-button">Berikutnya</button>
         </div>
 
       </div>
@@ -76,58 +78,55 @@
   </div>
 
   <!-- ===================== MODAL CREATE / EDIT ===================== -->
-  <div x-show="open" x-cloak @keydown.escape.window="close()" class="fixed inset-0 z-99999 flex items-center justify-center overflow-y-auto p-5" >
-    <div class="modal-close-btn fixed inset-0 h-full w-full bg-gray-400/50 backdrop-blur-[3px]" @click="close()"></div>
+  <div x-show="open" x-cloak @keydown.escape.window="close()" class="modal" >
+    <div class="backdrop" @click="close()"></div>
     
-    <div class="no-scrollbar relative w-full max-w-175 overflow-y-auto rounded-3xl bg-white p-4 lg:p-11 dark:bg-gray-900">
+    <div class="no-scrollbar dialog">
       
-      <button type="button" @click="close()" class="transition-color absolute top-5 right-5 z-999 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/[0.07] dark:hover:text-gray-300" >
-        <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.04289 16.5413C5.65237 16.9318 5.65237 17.565 6.04289 17.9555C6.43342 18.346 7.06658 18.346 7.45711 17.9555L11.9987 13.4139L16.5408 17.956C16.9313 18.3466 17.5645 18.3466 17.955 17.956C18.3455 17.5655 18.3455 16.9323 17.955 16.5418L13.4129 11.9997L17.955 7.4576C18.3455 7.06707 18.3455 6.43391 17.955 6.04338C17.5645 5.65286 16.9313 5.65286 16.5408 6.04338L11.9987 10.5855L7.45711 6.0439C7.06658 5.65338 6.43342 5.65338 6.04289 6.0439C5.65237 6.43442 5.65237 7.06759 6.04289 7.45811L10.5845 11.9997L6.04289 16.5413Z" fill=""/></svg>
+      <button type="button" @click="close()" class="close-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
 
-      <div class="px-2 pr-14">
-        <h4 class="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90" x-text="editId ? 'Edit Sumber Perolehan Aset' : 'Tambah Sumber Perolehan Aset'"></h4>
-        <p class="mb-6 text-sm text-gray-500 lg:mb-7 dark:text-gray-400">Lengkapi data sumber perolehan aset di bawah ini, lalu simpan.</p>
+      <div class="dialog-header">
+        <h4 x-text="editId ? 'Edit Sumber Perolehan Aset' : 'Tambah Sumber Perolehan Aset'"></h4>
+        <p>Lengkapi data Sumber Perolehan Aset di bawah ini, lalu simpan.</p>
       </div>
 
-      <form x-ref="form" @submit.prevent="submit()" enctype="multipart/form-data" class="flex flex-col" novalidate autocomplete="off">
+      <form x-ref="form" @submit.prevent="submit()" enctype="multipart/form-data" class="form" novalidate autocomplete="off">
         <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>" />
 
-        <div class="custom-scrollbar h-112.5 overflow-y-auto px-2" style="height: calc(var(--spacing) * 82.5)">
+        <div class="custom-scrollbar form-scroll">
           
-          <div class="mb-6">
-            <!-- <h4 class="mb-5 text-lg font-medium text-gray-800 lg:mb-6 dark:text-white/90">Data Pribadi</h4> -->
-            <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+          <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
 
-              <div class="col-span-2">
-                <label class="<?= $label_cls ?>">Nama Sumber Perolehan Aset<span class="text-error-500">*</span></label>
-                <input type="text" name="source_name" maxlength="100" placeholder="Nama Sumber Perolehan Aset" class="<?= $input_cls ?>" />
-                <?= sprintf($err, 'source_name') ?>
-              </div>
-              
-              <div class="col-span-2">
-                <label class="<?= $label_cls ?>">Deskripsi Sumber Perolehan Aset</label>
-                <textarea name="description_source" rows="3" maxlength="255" placeholder="Deskripsi Sumber Perolehan Aset..." class="<?= $area_cls ?>"></textarea>
-                <?= sprintf($err, 'description_source') ?>
-              </div>
-
-              <div class="col-span-2 lg:col-span-1">
-                <label class="<?= $label_cls ?>">Status Aktif</label>
-                <label class="relative flex h-11 cursor-pointer items-center gap-3 text-sm font-medium text-gray-700 select-none dark:text-gray-400">
-                  <input type="checkbox" name="is_active" value="1" checked class="peer custom-switch-input" />
-                  <span class="mb-switch"></span>
-                  Aktif
-                </label>
-              </div>
-
+            <div class="col-span-2">
+              <label class="<?= $label_cls ?>">Nama Sumber Perolehan Aset<span class="text-error-500">*</span></label>
+              <input type="text" name="source_name" maxlength="100" placeholder="Nama Sumber Perolehan Aset" class="<?= $input_cls ?>" />
+              <?= sprintf($err, 'source_name') ?>
             </div>
+            
+            <div class="col-span-2">
+              <label class="<?= $label_cls ?>">Deskripsi Sumber Perolehan Aset</label>
+              <textarea name="description_source" rows="3" maxlength="255" placeholder="Deskripsi Sumber Perolehan Aset..." class="<?= $area_cls ?>"></textarea>
+              <?= sprintf($err, 'description_source') ?>
+            </div>
+
+            <div class="col-span-2 lg:col-span-1">
+              <label class="<?= $label_cls ?>">Status Aktif</label>
+              <label class="relative flex h-11 cursor-pointer items-center gap-3 text-sm font-medium text-gray-700 select-none dark:text-gray-400">
+                <input type="checkbox" name="is_active" value="1" checked class="peer custom-switch-input" />
+                <span class="mb-switch"></span>
+                Aktif
+              </label>
+            </div>
+
           </div>
 
         </div>
 
-        <div class="mt-6 flex items-center gap-3 px-2 lg:justify-end">
-          <button type="button" @click="close()" class="shadow-theme-xs flex w-full justify-center rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition ring-inset hover:bg-gray-50 sm:w-auto dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/3">Batal</button>
-          <button type="submit" :disabled="saving" class="bg-brand-500 shadow-theme-xs hover:bg-brand-600 flex w-full justify-center rounded-lg px-4 py-3 text-sm font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto">
+        <div class="form-actions">
+          <button type="button" @click="close()" class="secondary-button">Batal</button>
+          <button type="submit" :disabled="saving" class="primary-button">
             <span x-text="saving ? 'Menyimpan...' : 'Simpan'"></span>
           </button>
         </div>
