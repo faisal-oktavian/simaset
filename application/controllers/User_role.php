@@ -4,13 +4,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class User_role extends Admin_Controller
 {
     private $modules = array(
-        'dashboard' => 'Dashboard',
+        'dashboard'                 => 'Dashboard',
         'master_acquisition_source' => 'Master Sumber Perolehan Aset',
-        'master_funding_source' => 'Master Sumber Dana',
-        'karyawan'  => 'Master Karyawan',
-        'supplier'  => 'Master Supplier',
-        'user'      => 'User',
-        'user_role' => 'Hak Akses',
+        'master_funding_source'     => 'Master Sumber Dana',
+        'master_category_product'   => 'Master Kelompok Aset  ',
+        'karyawan'                  => 'Master Karyawan',
+        'supplier'                  => 'Master Supplier',
+        'user'                      => 'User',
+        'user_role'                 => 'Hak Akses',
     );
 
     public function index()

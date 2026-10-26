@@ -29,6 +29,14 @@ $route['master-funding-source/store'] = 'master_funding_source/store';
 $route['master-funding-source/update/(:num)'] = 'master_funding_source/update/$1';
 $route['master-funding-source/delete/(:num)'] = 'master_funding_source/delete/$1';
 
+// Master Category Product / Master Kelompok Aset
+$route['master-category-product'] = 'master_category_product/index';
+$route['master-category-product/table'] = 'master_category_product/table';
+$route['master-category-product/get/(:num)'] = 'master_category_product/get/$1';
+$route['master-category-product/store'] = 'master_category_product/store';
+$route['master-category-product/update/(:num)'] = 'master_category_product/update/$1';
+$route['master-funding-source/delete/(:num)'] = 'master_funding_source/delete/$1';
+
 // Role and menu access
 $route['user_role'] = 'user_role/index';
 $route['user_role/save_permissions'] = 'user_role/save_permissions';

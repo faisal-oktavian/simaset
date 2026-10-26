@@ -7,6 +7,7 @@ class Role_model extends CI_Model
         'dashboard', 
         'master_acquisition_source', 
         'master_funding_source', 
+        'master_category_product',
         'karyawan', 
         'supplier', 
         'user', 

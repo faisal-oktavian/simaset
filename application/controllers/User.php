@@ -11,6 +11,7 @@ class User extends Admin_Controller
         'dashboard', 
         'master_acquisition_source', 
         'master_funding_source', 
+        'master_category_product', 
         'karyawan', 
         'supplier', 
         'user', 

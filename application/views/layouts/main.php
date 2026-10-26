@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title><?= html_escape($title) ?> | Master Backend</title>
+    <title><?= html_escape($title) ?> | Simaset</title>
     <meta name="csrf-name" content="<?= $this->security->get_csrf_token_name() ?>" />
     <meta name="csrf-hash" content="<?= $this->security->get_csrf_hash() ?>" />
     <meta name="base-url" content="<?= site_url() ?>" />
