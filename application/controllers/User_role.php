@@ -6,6 +6,7 @@ class User_role extends Admin_Controller
     private $modules = array(
         'dashboard' => 'Dashboard',
         'master_acquisition_source' => 'Master Sumber Perolehan Aset',
+        'master_funding_source' => 'Master Sumber Dana',
         'karyawan'  => 'Master Karyawan',
         'supplier'  => 'Master Supplier',
         'user'      => 'User',

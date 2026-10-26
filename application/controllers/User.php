@@ -10,6 +10,7 @@ class User extends Admin_Controller
     const MENUS = array(
         'dashboard', 
         'master_acquisition_source', 
+        'master_funding_source', 
         'karyawan', 
         'supplier', 
         'user', 

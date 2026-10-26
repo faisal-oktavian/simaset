@@ -13,13 +13,21 @@ $route['logout']        = 'auth/logout';
 // Dashboard
 $route['dashboard'] = 'dashboard/index';
 
-// Master Acquisition Source
+// Master Acquisition Source / Master Sumber Perolehan Aset
 $route['master-acquisition-source'] = 'master_acquisition_source/index';
 $route['master-acquisition-source/table'] = 'master_acquisition_source/table';
 $route['master-acquisition-source/get/(:num)'] = 'master_acquisition_source/get/$1';
 $route['master-acquisition-source/store'] = 'master_acquisition_source/store';
 $route['master-acquisition-source/update/(:num)'] = 'master_acquisition_source/update/$1';
 $route['master-acquisition-source/delete/(:num)'] = 'master_acquisition_source/delete/$1';
+
+// Master Funding Source / Master Sumber Dana
+$route['master-funding-source'] = 'master_funding_source/index';
+$route['master-funding-source/table'] = 'master_funding_source/table';
+$route['master-funding-source/get/(:num)'] = 'master_funding_source/get/$1';
+$route['master-funding-source/store'] = 'master_funding_source/store';
+$route['master-funding-source/update/(:num)'] = 'master_funding_source/update/$1';
+$route['master-funding-source/delete/(:num)'] = 'master_funding_source/delete/$1';
 
 // Role and menu access
 $route['user_role'] = 'user_role/index';

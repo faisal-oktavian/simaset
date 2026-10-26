@@ -1047,6 +1047,195 @@ export function registerApp(Alpine) {
     }),
   );
 
+  /* ------------------------ Master Sumber Dana (CRUD memakai popup modal, salinan Karyawan) */
+  Alpine.data("masterFundingSourceCrud", () =>
+    Object.assign(tableState(), {
+      open: false,
+      saving: false,
+      tableLoading: false,
+      modalLoading: false,
+      passwordVisible: false,
+      editId: null,
+
+      init() {
+        this.initTable();
+      },
+
+      async openCreate() {
+        if (this.modalLoading) return;
+        const loadingStartedAt = Date.now();
+        this.modalLoading = true;
+        swal.fire({
+          title: "Menyiapkan form...",
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          didOpen: () => swal.showLoading(),
+        });
+        await waitForMinimumLoading(loadingStartedAt);
+        this.resetForm();
+        swal.close();
+        this.modalLoading = false;
+        this.open = true;
+      },
+
+      async openEdit(id) {
+        if (this.modalLoading) return;
+        const loadingStartedAt = Date.now();
+        this.modalLoading = true;
+        swal.fire({
+          title: "Memuat data...",
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          didOpen: () => swal.showLoading(),
+        });
+        try {
+          const request = fetch(`${baseUrl()}master_funding_source/get/${id}`, {
+              credentials: "same-origin",
+              headers: { "X-Requested-With": "XMLHttpRequest" },
+            }).then(
+              (res) => ({ res }),
+              (error) => ({ error }),
+            );
+          const [{ res, error }] = await Promise.all([
+            request,
+            waitForMinimumLoading(loadingStartedAt),
+          ]);
+          if (error) throw error;
+          if (res.status === 401) {
+            window.location.href = baseUrl() + "login";
+            return;
+          }
+          const json = await res.json();
+          swal.close();
+          if (!json.status) {
+            toast("error", json.message || "Data tidak ditemukan.");
+            return;
+          }
+          this.resetForm();
+          this.editId = id;
+          this.fill(json.data);
+          this.open = true;
+        } catch (e) {
+          swal.close();
+          toast("error", "Tidak dapat memuat data.");
+        } finally {
+          this.modalLoading = false;
+        }
+      },
+
+      async refreshTable() {
+        const res = await fetch(`${baseUrl()}master_funding_source/table`, {
+          credentials: "same-origin",
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+        });
+        if (!res.ok) throw new Error("Gagal memuat ulang tabel.");
+
+        const tbody = this.$root.querySelector("tbody");
+        tbody.innerHTML = await res.text();
+        this.rows = Array.from(tbody.querySelectorAll("tr[data-row]"));
+        this.apply();
+      },
+
+      close() {
+        this.open = false;
+      },
+
+      resetForm() {
+        this.$refs.form.reset();
+        this.clearErrors();
+        this.editId = null;
+        this.passwordVisible = false;
+      },
+
+      togglePassword() {
+        this.passwordVisible = !this.passwordVisible;
+      },
+
+      fill(d) {
+        const f = this.$refs.form;
+
+        f.elements["funding_name"].value = String(d.funding_name || "");
+        f.elements["description_funding"].value = String(d.description_funding || "");
+        f.elements["is_active"].checked = String(d.is_active) === "1";
+      },
+
+      clearErrors() {
+        this.$refs.form.querySelectorAll("[data-error-for]").forEach((p) => (p.textContent = ""));
+        this.$refs.form.querySelectorAll(".border-error-500\\!").forEach((el) => {
+          el.classList.remove("border-error-500!", "dark:border-error-500!");
+        });
+      },
+
+      showErrors(errors) {
+        Object.entries(errors).forEach(([name, msg]) => {
+          const p = this.$refs.form.querySelector(`[data-error-for="${name}"]`);
+          if (p) {
+            p.textContent = msg;
+          }
+          this.$refs.form.querySelectorAll(`[name="${name}"]`).forEach((el) => {
+            if (el.type !== "checkbox" && el.type !== "radio") {
+              el.classList.add("border-error-500!", "dark:border-error-500!");
+            }
+          });
+        });
+      },
+
+      async submit() {
+        this.clearErrors();
+        let tableLoadingStartedAt = null;
+        this.saving = true;
+        try {
+          const url = this.editId
+            ? `${baseUrl()}master_funding_source/update/${this.editId}`
+            : `${baseUrl()}master_funding_source/store`;
+          const formData = new FormData(this.$refs.form);
+          const { res, json } = await post(url, formData);
+
+          if (json.status) {
+            this.open = false;
+            tableLoadingStartedAt = Date.now();
+            this.tableLoading = true;
+            try {
+              await this.refreshTable();
+              toast("success", json.message || "Data sumber perolehan aset berhasil disimpan.");
+            } catch (e) {
+              toast("warning", "Data tersimpan, tetapi tabel gagal diperbarui.");
+            }
+          } else {
+            if (json.errors) this.showErrors(json.errors);
+            toast("error", json.message || `Gagal menyimpan data (${res.status}).`);
+          }
+        } catch (e) {
+          toast("error", "Tidak dapat terhubung ke server.");
+        } finally {
+          if (tableLoadingStartedAt !== null) {
+            await waitForMinimumLoading(tableLoadingStartedAt);
+          }
+          this.saving = false;
+          this.tableLoading = false;
+        }
+      },
+
+      remove(id, nama) {
+        return deleteRecord({
+          url: `${baseUrl()}master_funding_source/delete/${id}`,
+          nama,
+          label: "master sumber dana",
+          onLoading: () => { this.tableLoading = true; },
+          onSuccess: async (json) => {
+            try {
+              await this.refreshTable();
+              toast("success", json.message || "Data sumber dana berhasil dihapus.");
+            } catch (e) {
+              toast("warning", "Data terhapus, tetapi tabel gagal diperbarui.");
+            }
+          },
+          onFinish: () => { this.tableLoading = false; },
+        });
+      },
+    }),
+  );
+
   //////////////////////////////////////////////////////////////////////
 
   /* ------------------------ Master Supplier (CRUD halaman terpisah) */

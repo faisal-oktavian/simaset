@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Master Master_acquisition_source - CRUD memakai popup modal (AJAX + SweetAlert).
+ * Master Sumber Perolehan Aset
  */
 class Master_acquisition_source extends Admin_Controller
 {
