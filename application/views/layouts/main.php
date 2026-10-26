@@ -10,6 +10,10 @@
     <meta name="base-url" content="<?= site_url() ?>" />
     <link rel="icon" href="<?= base_url('assets/images/favicon.ico') ?>" />
     <link rel="stylesheet" href="<?= base_url('assets/css/style.css') ?>?v=<?= (int) @filemtime(FCPATH . 'assets/css/style.css') ?>" />
+
+    <!-- custom style view -->
+    <link rel="stylesheet" href="<?= base_url('assets/css/custom_style.css') ?>?v=<?= (int) @filemtime(FCPATH . 'assets/css/custom_style.css') ?>" />
+    
     <style>
       /* Loading konten saat pindah menu (tidak bergantung pada hasil build Tailwind) */
       .mn-loading{

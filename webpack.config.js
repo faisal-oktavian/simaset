@@ -19,7 +19,10 @@ module.exports = (env, argv) => ({
   output: {
     filename: "js/bundle.js",
     path: path.resolve(__dirname, "assets"),
-    clean: true,
+    // clean: true,
+    clean: {
+      keep: /^css\/custom_style\.css$/,
+    },
   },
   module: {
     rules: [
