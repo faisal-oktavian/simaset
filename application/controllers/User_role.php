@@ -9,6 +9,7 @@ class User_role extends Admin_Controller
         'master_funding_source'     => 'Master Sumber Dana',
         'master_category_product'   => 'Master Kelompok Aset',
         'master_kib'                => 'Master KIB',
+        'master_condition'          => 'Master Kondisi Aset',
         'karyawan'                  => 'Master Karyawan',
         'supplier'                  => 'Master Supplier',
         'user'                      => 'User',

@@ -12,6 +12,7 @@ class User extends Admin_Controller
         'master_acquisition_source', 
         'master_funding_source', 
         'master_category_product',
+        'master_condition',
         'master_kib',
         'karyawan', 
         'supplier', 

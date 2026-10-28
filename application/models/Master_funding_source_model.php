@@ -9,12 +9,12 @@ class Master_funding_source_model extends CI_Model
     {
         $this->db->order_by('id' . $this->table . '', 'DESC');
         $this->db->where('status', 1);
-        $master_acquisition_source = $this->db->get($this->table);
+        $master_funding_source = $this->db->get($this->table);
         // echo "<pre>"; print_r($this->db->last_query());die;
 
-        $data_master_acquisition_source = $master_acquisition_source->result_array();
+        $data_master_funding_source = $master_funding_source->result_array();
 
-        return $data_master_acquisition_source;
+        return $data_master_funding_source;
     }
 
     public function find($id)

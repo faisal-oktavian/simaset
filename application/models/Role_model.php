@@ -9,6 +9,7 @@ class Role_model extends CI_Model
         'master_funding_source', 
         'master_category_product',
         'master_kib',
+        'master_condition',
         'karyawan', 
         'supplier', 
         'user', 

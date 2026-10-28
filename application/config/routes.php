@@ -45,6 +45,14 @@ $route['master-kib/store'] = 'master_kib/store';
 $route['master-kib/update/(:num)'] = 'master_kib/update/$1';
 $route['master-kib/delete/(:num)'] = 'master_kib/delete/$1';
 
+// Master Condition / Master Kondisi Aset
+$route['master-condition'] = 'master_condition/index';
+$route['master-condition/table'] = 'master_condition/table';
+$route['master-condition/get/(:num)'] = 'master_condition/get/$1';
+$route['master-condition/store'] = 'master_condition/store';
+$route['master-condition/update/(:num)'] = 'master_condition/update/$1';
+$route['master-condition/delete/(:num)'] = 'master_condition/delete/$1';
+
 // Role and menu access
 $route['user_role'] = 'user_role/index';
 $route['user_role/save_permissions'] = 'user_role/save_permissions';
