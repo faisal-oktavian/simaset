@@ -37,6 +37,14 @@ $route['master-category-product/store'] = 'master_category_product/store';
 $route['master-category-product/update/(:num)'] = 'master_category_product/update/$1';
 $route['master-funding-source/delete/(:num)'] = 'master_funding_source/delete/$1';
 
+// Master KIB / Master Kartu Inventaris Barang
+$route['master-kib'] = 'master_kib/index';
+$route['master-kib/table'] = 'master_kib/table';
+$route['master-kib/get/(:num)'] = 'master_kib/get/$1';
+$route['master-kib/store'] = 'master_kib/store';
+$route['master-kib/update/(:num)'] = 'master_kib/update/$1';
+$route['master-kib/delete/(:num)'] = 'master_kib/delete/$1';
+
 // Role and menu access
 $route['user_role'] = 'user_role/index';
 $route['user_role/save_permissions'] = 'user_role/save_permissions';
