@@ -53,6 +53,14 @@ $route['master-condition/store'] = 'master_condition/store';
 $route['master-condition/update/(:num)'] = 'master_condition/update/$1';
 $route['master-condition/delete/(:num)'] = 'master_condition/delete/$1';
 
+// Master Unit / Master Unit
+$route['master-unit'] = 'master_unit/index';
+$route['master-unit/table'] = 'master_unit/table';
+$route['master-unit/get/(:num)'] = 'master_unit/get/$1';
+$route['master-unit/store'] = 'master_unit/store';
+$route['master-unit/update/(:num)'] = 'master_unit/update/$1';
+$route['master-unit/delete/(:num)'] = 'master_unit/delete/$1';
+
 // Role and menu access
 $route['user_role'] = 'user_role/index';
 $route['user_role/save_permissions'] = 'user_role/save_permissions';

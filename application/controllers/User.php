@@ -14,6 +14,7 @@ class User extends Admin_Controller
         'master_category_product',
         'master_condition',
         'master_kib',
+        'master_unit',
         'karyawan', 
         'supplier', 
         'user', 

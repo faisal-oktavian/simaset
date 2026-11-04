@@ -10,6 +10,7 @@ class User_role extends Admin_Controller
         'master_category_product'   => 'Master Kelompok Aset',
         'master_kib'                => 'Master KIB',
         'master_condition'          => 'Master Kondisi Aset',
+        'master_unit'          => 'Master Unit',
         'karyawan'                  => 'Master Karyawan',
         'supplier'                  => 'Master Supplier',
         'user'                      => 'User',

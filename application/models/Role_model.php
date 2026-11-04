@@ -10,6 +10,7 @@ class Role_model extends CI_Model
         'master_category_product',
         'master_kib',
         'master_condition',
+        'master_unit',
         'karyawan', 
         'supplier', 
         'user', 
