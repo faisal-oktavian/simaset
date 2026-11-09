@@ -2216,6 +2216,250 @@ export function registerApp(Alpine) {
     }),
   );
 
+  /* ------------------------ Master Room (CRUD memakai popup modal, salinan Karyawan) */
+  Alpine.data("masterRoomCrud", () =>
+    Object.assign(tableState(), {
+      open: false,
+      saving: false,
+      tableLoading: false,
+      modalLoading: false,
+      passwordVisible: false,
+      editId: null,
+
+      init() {
+        this.initTable();
+        this.initSelect2Unit();
+        this.initSelect2Building();
+      },
+
+      // dropdownParent wajib elemen modal, kalau tidak dropdown tampil di belakang modal
+      initSelect2Unit() {
+        const $unit = $(this.$refs.form.elements["idmaster_unit"]);
+        $unit.select2({
+          width: "100%",
+          placeholder: $unit.data("placeholder") || "Pilih...",
+          allowClear: true,
+          dropdownParent: $(this.$refs.modal),
+          language: {
+            noResults: () => "Unit tidak ditemukan",
+            searching: () => "Mencari...",
+          },
+        });
+        $unit.on("change", () => {
+          const p = this.$refs.form.querySelector('[data-error-for="idmaster_unit"]');
+          if (p) p.textContent = "";
+          $unit.next(".select2-container").find(".select2-selection").removeClass("select2-invalid");
+        });
+      },
+
+      // dropdownParent wajib elemen modal, kalau tidak dropdown tampil di belakang modal
+      initSelect2Building() {
+        const $building = $(this.$refs.form.elements["idmaster_building"]);
+        $building.select2({
+          width: "100%",
+          placeholder: $building.data("placeholder") || "Pilih...",
+          allowClear: true,
+          dropdownParent: $(this.$refs.modal),
+          language: {
+            noResults: () => "Gedung tidak ditemukan",
+            searching: () => "Mencari...",
+          },
+        });
+        $building.on("change", () => {
+          const p = this.$refs.form.querySelector('[data-error-for="idmaster_building"]');
+          if (p) p.textContent = "";
+          $building.next(".select2-container").find(".select2-selection").removeClass("select2-invalid");
+        });
+      },
+
+      async openCreate() {
+        if (this.modalLoading) return;
+        const loadingStartedAt = Date.now();
+        this.modalLoading = true;
+        swal.fire({
+          title: "Menyiapkan form...",
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          didOpen: () => swal.showLoading(),
+        });
+        await waitForMinimumLoading(loadingStartedAt);
+        this.resetForm();
+        swal.close();
+        this.modalLoading = false;
+        this.open = true;
+      },
+
+      async openEdit(id) {
+        if (this.modalLoading) return;
+        const loadingStartedAt = Date.now();
+        this.modalLoading = true;
+        swal.fire({
+          title: "Memuat data...",
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          didOpen: () => swal.showLoading(),
+        });
+        try {
+          const request = fetch(`${baseUrl()}master_room/get/${id}`, {
+              credentials: "same-origin",
+              headers: { "X-Requested-With": "XMLHttpRequest" },
+            }).then(
+              (res) => ({ res }),
+              (error) => ({ error }),
+            );
+          const [{ res, error }] = await Promise.all([
+            request,
+            waitForMinimumLoading(loadingStartedAt),
+          ]);
+          if (error) throw error;
+          if (res.status === 401) {
+            window.location.href = baseUrl() + "login";
+            return;
+          }
+          const json = await res.json();
+          swal.close();
+          if (!json.status) {
+            toast("error", json.message || "Data tidak ditemukan.");
+            return;
+          }
+          this.resetForm();
+          this.editId = id;
+          this.fill(json.data);
+          this.open = true;
+        } catch (e) {
+          swal.close();
+          toast("error", "Tidak dapat memuat data.");
+        } finally {
+          this.modalLoading = false;
+        }
+      },
+
+      async refreshTable() {
+        const res = await fetch(`${baseUrl()}master_room/table`, {
+          credentials: "same-origin",
+          headers: { "X-Requested-With": "XMLHttpRequest" },
+        });
+        if (!res.ok) throw new Error("Gagal memuat ulang tabel.");
+
+        const tbody = this.$root.querySelector("tbody");
+        tbody.innerHTML = await res.text();
+        this.rows = Array.from(tbody.querySelectorAll("tr[data-row]"));
+        this.apply();
+      },
+
+      close() {
+        this.open = false;
+        $(this.$refs.form.elements["idmaster_unit"]).select2("close");
+        $(this.$refs.form.elements["idmaster_building"]).select2("close");
+      },
+
+      resetForm() {
+        this.$refs.form.reset();
+        $(this.$refs.form.elements["idmaster_unit"]).val(null).trigger("change");
+        $(this.$refs.form.elements["idmaster_building"]).val(null).trigger("change");
+        this.clearErrors();
+        this.editId = null;
+        this.passwordVisible = false;
+      },
+
+      togglePassword() {
+        this.passwordVisible = !this.passwordVisible;
+      },
+
+      fill(d) {
+        const f = this.$refs.form;
+
+        f.elements["room_code"].value = String(d.room_code || "");
+        f.elements["room_name"].value = String(d.room_name || "");
+        f.elements["description_room"].value = String(d.description_room || "");
+        f.elements["is_active"].checked = String(d.is_active) === "1";
+
+        const $unit = $(f.elements["idmaster_unit"]);
+        $unit.val(d.idmaster_unit ? String(d.idmaster_unit) : null).trigger("change");
+
+        const $building = $(f.elements["idmaster_building"]);
+        $building.val(d.idmaster_building ? String(d.idmaster_building) : null).trigger("change");
+      },
+
+      clearErrors() {
+        this.$refs.form.querySelectorAll("[data-error-for]").forEach((p) => (p.textContent = ""));
+        this.$refs.form.querySelectorAll(".border-error-500\\!").forEach((el) => {
+          el.classList.remove("border-error-500!", "dark:border-error-500!");
+        });
+        this.$refs.form.querySelectorAll(".select2-selection").forEach((el) => el.classList.remove("select2-invalid"));
+      },
+
+      showErrors(errors) {
+        Object.entries(errors).forEach(([name, msg]) => {
+          const p = this.$refs.form.querySelector(`[data-error-for="${name}"]`);
+          if (p) p.textContent = msg;
+          this.$refs.form.querySelectorAll(`[name="${name}"]`).forEach((el) => {
+            if (el.type === "checkbox" || el.type === "radio") return;
+            if (el.tagName === "SELECT") {
+              $(el).next(".select2-container").find(".select2-selection").addClass("select2-invalid");
+            } else {
+              el.classList.add("border-error-500!", "dark:border-error-500!");
+            }
+          });
+        });
+      },
+
+      async submit() {
+        this.clearErrors();
+        let tableLoadingStartedAt = null;
+        this.saving = true;
+        try {
+          const url = this.editId
+            ? `${baseUrl()}master_room/update/${this.editId}`
+            : `${baseUrl()}master_room/store`;
+          const formData = new FormData(this.$refs.form);
+          const { res, json } = await post(url, formData);
+
+          if (json.status) {
+            this.open = false;
+            tableLoadingStartedAt = Date.now();
+            this.tableLoading = true;
+            try {
+              await this.refreshTable();
+              toast("success", json.message || "Data Ruangan berhasil disimpan.");
+            } catch (e) {
+              toast("warning", "Data tersimpan, tetapi tabel gagal diperbarui.");
+            }
+          } else {
+            if (json.errors) this.showErrors(json.errors);
+            toast("error", json.message || `Gagal menyimpan data (${res.status}).`);
+          }
+        } catch (e) {
+          toast("error", "Tidak dapat terhubung ke server.");
+        } finally {
+          if (tableLoadingStartedAt !== null) {
+            await waitForMinimumLoading(tableLoadingStartedAt);
+          }
+          this.saving = false;
+          this.tableLoading = false;
+        }
+      },
+
+      remove(id, nama) {
+        return deleteRecord({
+          url: `${baseUrl()}master_room/delete/${id}`,
+          nama,
+          label: "master room",
+          onLoading: () => { this.tableLoading = true; },
+          onSuccess: async (json) => {
+            try {
+              await this.refreshTable();
+              toast("success", json.message || "Data Ruangan berhasil dihapus.");
+            } catch (e) {
+              toast("warning", "Data terhapus, tetapi tabel gagal diperbarui.");
+            }
+          },
+          onFinish: () => { this.tableLoading = false; },
+        });
+      },
+    }),
+  );
+
   //////////////////////////////////////////////////////////////////////
 
   /* ------------------------ Master Supplier (CRUD halaman terpisah) */

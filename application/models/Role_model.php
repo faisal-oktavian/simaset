@@ -12,6 +12,7 @@ class Role_model extends CI_Model
         'master_condition',
         'master_unit',
         'master_technical_team',
+        'master_room',
         'karyawan', 
         'supplier', 
         'user', 

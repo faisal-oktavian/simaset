@@ -69,6 +69,15 @@ $route['master-technical-team/store'] = 'master_technical_team/store';
 $route['master-technical-team/update/(:num)'] = 'master_technical_team/update/$1';
 $route['master-technical-team/delete/(:num)'] = 'master_technical_team/delete/$1';
 
+// Master Room / Master Room
+$route['master-room'] = 'master_room/index';
+$route['master-room/table'] = 'master_room/table';
+$route['master-room/get/(:num)'] = 'master_room/get/$1';
+$route['master-room/store'] = 'master_room/store';
+$route['master-room/update/(:num)'] = 'master_room/update/$1';
+$route['master-room/delete/(:num)'] = 'master_room/delete/$1';
+
+
 
 // Role and menu access
 $route['user_role'] = 'user_role/index';

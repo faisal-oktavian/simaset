@@ -3214,101 +3214,48 @@ input:checked + .mb-switch::after {
 .select2-container {
   z-index: 100000;
 }
-.select2-container--default .select2-selection--single {
-  height: 2.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #d0d5dd;
-  background: transparent;
+.form .select2-container--default .select2-selection--single {
   display: flex;
   align-items: center;
+  height: 2.75rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.5rem;
+  background: transparent;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
 }
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-  padding-left: 0.5rem;
-  padding-right: 3rem;
+.form .select2-container--default .select2-selection--single .select2-selection__rendered {
   width: 100%;
+  padding-left: 1rem;
+  padding-right: 3rem;
+  color: #1d2939;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  color: #1d2939;
 }
-.select2-container--default .select2-selection--single .select2-selection__placeholder {
+.form .select2-container--default .select2-selection--single .select2-selection__placeholder {
   color: #98a2b3;
 }
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-  height: 100%;
+.form .select2-container--default .select2-selection--single .select2-selection__arrow {
   right: 0.75rem;
+  height: 100%;
 }
-.select2-container--default .select2-selection--single .select2-selection__clear {
+.form .select2-container--default .select2-selection--single .select2-selection__clear {
   margin-right: 0.5rem;
   color: #98a2b3;
 }
-.select2-container--default.select2-container--focus .select2-selection--single,
-.select2-container--default.select2-container--open .select2-selection--single {
+.form .select2-container--default.select2-container--focus .select2-selection--single,
+.form .select2-container--default.select2-container--open .select2-selection--single {
   border-color: #9cb9ff;
   box-shadow: 0 0 0 3px rgba(70, 95, 255, 0.1);
 }
 .select2-selection.select2-invalid {
   border-color: #f04438 !important;
 }
-.select2-dropdown {
-  background: #fff;
-  border: 1px solid #d0d5dd;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
-}
-.select2-container--default .select2-search--dropdown {
-  padding: 0.5rem;
-}
-.select2-container--default .select2-search--dropdown .select2-search__field {
-  height: 2.5rem;
-  padding: 0 0.75rem;
-  border: 1px solid #d0d5dd;
-  border-radius: 0.5rem;
-  background: transparent;
-  color: #1d2939;
-  font-size: 0.875rem;
-  outline: none;
-}
-.select2-container--default .select2-search--dropdown .select2-search__field:focus {
-  border-color: #9cb9ff;
-}
-.select2-results__option {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  color: #344054;
-}
-.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
-  background: #ecf3ff;
-  color: #3641f5;
-}
-.select2-container--default .select2-results__option--selected {
-  background: #f2f4f7;
-}
-.dark .select2-container--default .select2-selection--single {
+.dark .form .select2-container--default .select2-selection--single {
   border-color: #344054;
   background: #101828;
 }
-.dark .select2-container--default .select2-selection--single .select2-selection__rendered {
+.dark .form .select2-container--default .select2-selection--single .select2-selection__rendered {
   color: rgba(255, 255, 255, 0.9);
-}
-.dark .select2-dropdown {
-  background: #101828;
-  border-color: #344054;
-}
-.dark .select2-container--default .select2-search--dropdown .select2-search__field {
-  border-color: #344054;
-  color: rgba(255, 255, 255, 0.9);
-}
-.dark .select2-results__option {
-  color: #98a2b3;
-}
-.dark .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-}
-.dark .select2-container--default .select2-results__option--selected {
-  background: rgba(255, 255, 255, 0.08);
 }
 @layer base {
   input:where([type='text']),input:where(:not([type])),input:where([type='email']),input:where([type='url']),input:where([type='password']),input:where([type='number']),input:where([type='date']),input:where([type='datetime-local']),input:where([type='month']),input:where([type='search']),input:where([type='tel']),input:where([type='time']),input:where([type='week']),select:where([multiple]),textarea,select {
@@ -3799,3 +3746,4 @@ input:checked + .mb-switch::after {
     }
   }
 }
+
