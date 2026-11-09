@@ -510,3 +510,7 @@
         grid-column: span 1;
     }
 }
+
+.select2-selection {
+    padding: 10px;
+}

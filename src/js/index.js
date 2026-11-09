@@ -1,4 +1,5 @@
 import "sweetalert2/dist/sweetalert2.min.css";
+import "select2/dist/css/select2.min.css";
 import "../css/style.css";
 
 import persist from "@alpinejs/persist";

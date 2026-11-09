@@ -1,6 +1,10 @@
 import Swal from "sweetalert2";
 import DataTable from "datatables.net";
 
+import $ from "jquery";
+window.$ = window.jQuery = $; // select2 membutuhkan jQuery global
+import "select2";
+
 /* ------------------------------------------------------------------ helpers */
 const meta = (name) =>
   document.querySelector(`meta[name="${name}"]`)?.getAttribute("content") || "";
@@ -2006,6 +2010,27 @@ export function registerApp(Alpine) {
 
       init() {
         this.initTable();
+        this.initSelect2();
+      },
+
+      // dropdownParent wajib elemen modal, kalau tidak dropdown tampil di belakang modal
+      initSelect2() {
+        const $unit = $(this.$refs.form.elements["idmaster_unit"]);
+        $unit.select2({
+          width: "100%",
+          placeholder: $unit.data("placeholder") || "Pilih...",
+          allowClear: true,
+          dropdownParent: $(this.$refs.modal),
+          language: {
+            noResults: () => "Unit tidak ditemukan",
+            searching: () => "Mencari...",
+          },
+        });
+        $unit.on("change", () => {
+          const p = this.$refs.form.querySelector('[data-error-for="idmaster_unit"]');
+          if (p) p.textContent = "";
+          $unit.next(".select2-container").find(".select2-selection").removeClass("select2-invalid");
+        });
       },
 
       async openCreate() {
@@ -2085,10 +2110,12 @@ export function registerApp(Alpine) {
 
       close() {
         this.open = false;
+        $(this.$refs.form.elements["idmaster_unit"]).select2("close");
       },
 
       resetForm() {
         this.$refs.form.reset();
+        $(this.$refs.form.elements["idmaster_unit"]).val(null).trigger("change");
         this.clearErrors();
         this.editId = null;
         this.passwordVisible = false;
@@ -2103,9 +2130,11 @@ export function registerApp(Alpine) {
 
         f.elements["team_code"].value = String(d.team_code || "");
         f.elements["team_name"].value = String(d.team_name || "");
-        f.elements["idmaster_unit"].value = String(d.idmaster_unit || "");
         f.elements["team_scope"].value = String(d.team_scope || "");
         f.elements["is_active"].checked = String(d.is_active) === "1";
+
+        const $unit = $(f.elements["idmaster_unit"]);
+        $unit.val(d.idmaster_unit ? String(d.idmaster_unit) : null).trigger("change");
       },
 
       clearErrors() {
@@ -2113,16 +2142,18 @@ export function registerApp(Alpine) {
         this.$refs.form.querySelectorAll(".border-error-500\\!").forEach((el) => {
           el.classList.remove("border-error-500!", "dark:border-error-500!");
         });
+        this.$refs.form.querySelectorAll(".select2-selection").forEach((el) => el.classList.remove("select2-invalid"));
       },
 
       showErrors(errors) {
         Object.entries(errors).forEach(([name, msg]) => {
           const p = this.$refs.form.querySelector(`[data-error-for="${name}"]`);
-          if (p) {
-            p.textContent = msg;
-          }
+          if (p) p.textContent = msg;
           this.$refs.form.querySelectorAll(`[name="${name}"]`).forEach((el) => {
-            if (el.type !== "checkbox" && el.type !== "radio") {
+            if (el.type === "checkbox" || el.type === "radio") return;
+            if (el.tagName === "SELECT") {
+              $(el).next(".select2-container").find(".select2-selection").addClass("select2-invalid");
+            } else {
               el.classList.add("border-error-500!", "dark:border-error-500!");
             }
           });

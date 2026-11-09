@@ -81,7 +81,7 @@
   </div>
 
   <!-- ===================== MODAL CREATE / EDIT ===================== -->
-  <div x-show="open" x-cloak @keydown.escape.window="close()" class="modal" >
+  <div x-ref="modal" x-show="open" x-cloak @keydown.escape.window="close()" class="modal" >
     <div class="backdrop" @click="close()"></div>
     
     <div class="no-scrollbar dialog">
@@ -116,17 +116,14 @@
 
             <div class="col-span-2">
               <label class="<?= $label_cls ?>">Unit</label>
-              <div class="relative">
-                <select name="idmaster_unit" class="<?= $select_cls ?>">
-                  <option value="" class="<?= $opt_cls ?>">-- Tanpa Unit --</option>
-                  <?php foreach ($units as $unit): ?>
-                    <option value="<?= (int) $unit['idmaster_unit'] ?>" class="<?= $opt_cls ?>">
-                      <?= html_escape($unit['unit_code'] . ' - ' . $unit['unit_name']) ?>
-                    </option>
-                  <?php endforeach; ?>
-                </select>
-                <?= $chevron ?>
-              </div>
+              <select name="idmaster_unit" data-placeholder="Pilih / cari unit..." class="<?= $select_cls ?>">
+                <option value=""></option>
+                <?php foreach ($units as $unit): ?>
+                  <option value="<?= (int) $unit['idmaster_unit'] ?>">
+                    <?= html_escape($unit['unit_code'] . ' - ' . $unit['unit_name']) ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
               <?= sprintf($err, 'idmaster_unit') ?>
             </div>
             
