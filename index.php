@@ -8,15 +8,18 @@ define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'developm
 switch (ENVIRONMENT) {
     case 'development':
         // CI 3.1.x memakai dynamic property -> E_DEPRECATED di PHP 8.2, disembunyikan.
-        error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT); // untuk php 8.2 kebawah (8.3 - 8.4 belum di test)
-        // error_reporting(E_ALL); // untuk php 8.5
+        // error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT); // untuk php 8.2 kebawah (8.3 - 8.4 belum di test)
+
+        // CI 3.1.x masih memicu E_DEPRECATED, misalnya untuk dynamic property.
+        error_reporting(E_ALL & ~E_DEPRECATED); // untuk php 8.4.20 
         ini_set('display_errors', 1);
         break;
 
     case 'testing':
     case 'production':
         ini_set('display_errors', 0);
-        error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
+        // error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED); // // untuk php 8.2 kebawah (8.3 - 8.4 belum di test) 
+        error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_NOTICE & ~E_USER_DEPRECATED); // untuk php 8.4.20 
         break;
 
     default:

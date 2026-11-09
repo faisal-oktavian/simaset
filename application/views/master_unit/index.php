@@ -12,7 +12,7 @@
   $th_p       = 'text-theme-xs font-medium text-gray-500 dark:text-gray-400';
 ?>
 
-<div x-data="masterKibCrud()" class="content">
+<div x-data="masterUnitCrud()" class="content">
   <div class="card">
     <div class="toolbar">
       <h3>Daftar Unit</h3>
