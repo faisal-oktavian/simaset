@@ -80,6 +80,10 @@
     border-top: 1px solid #f2f4f7;
     padding: 1.25rem;
 }
+.content .form-section {
+    border-top: 1px solid #f2f4f7;
+    padding: 1.25rem;
+}
 .content .table-card { 
     position: relative;
     overflow: hidden;
@@ -121,6 +125,21 @@
     color: #667085;
     font-size: 14px;
     line-height: 20px;
+}
+.content .row-text-primary, .content .row-text-secondary {
+    display: block;
+}
+.content .row-text-primary {
+    color: #1d2939;
+    font-weight: 500;
+}
+.content .row-text-secondary, .content .row-subtext {
+    color: #98a2b3;
+    font-size: 12px;
+    line-height: 18px;
+}
+.content .row-subtext {
+    margin: .125rem 0 0;
 }
 .content .status { 
     display: inline-block;
@@ -309,7 +328,7 @@
     margin-bottom: 1.5rem;
 }
 .content .field-group { 
-    grid-column: span 2;
+    grid-column: 1 / -1;
 }
 .content .field-label { 
     display: block;
@@ -328,8 +347,47 @@
     font: inherit;
     box-shadow: 0 1px 2px rgb(16 24 40 / 5%);
 }
-.content input.field { 
+.content input.field, .content select.field {
     height: 44px;
+}
+.content select.field {
+    appearance: none;
+    padding-right: 2.75rem;
+}
+.content textarea.field {
+    min-height: 6rem;
+    resize: vertical;
+}
+.content .field-select-wrap {
+    position: relative;
+}
+.content .field-chevron {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    display: flex;
+    color: #667085;
+    pointer-events: none;
+    transform: translateY(-50%);
+}
+.content .field:disabled {
+    cursor: not-allowed;
+    border-color: #e4e7ec;
+    background: #f9fafb;
+    color: #667085;
+}
+.content .field.is-invalid {
+    border-color: #f04438;
+}
+.content .field.is-invalid:focus {
+    border-color: #f04438;
+    box-shadow: 0 0 0 3px rgb(240 68 56 / 10%);
+}
+.content .field-help {
+    margin: .375rem 0 0;
+    color: #667085;
+    font-size: 12px;
+    line-height: 18px;
 }
 .content .error { 
     margin: .375rem 0 0;
@@ -357,7 +415,7 @@
     margin-top: 1.5rem;
     padding: 0 .5rem;
 }
-.content .form-actions button { 
+.content .form-actions > * {
     width: 100%;
 }
 .content .form-actions .secondary-button { 
@@ -386,6 +444,15 @@
 }
 .dark .content .table th p, .dark .content .row-text, .dark .content .muted, .dark .content .dialog-header p { 
     color: #98a2b3;
+}
+.dark .content .row-text-primary {
+    color: rgb(255 255 255 / 90%);
+}
+.dark .content .row-text-secondary, .dark .content .row-subtext, .dark .content .field-help {
+    color: #98a2b3;
+}
+.dark .content .form-section {
+    border-color: #1f2937;
 }
 .dark .content .status-active { 
     background: rgb(18 183 106 / 15%);
@@ -450,6 +517,21 @@
     background: #111827;
     color: rgb(255 255 255 / 90%);
 }
+.dark .content .field:disabled {
+    border-color: #1f2937;
+    background: rgb(255 255 255 / 3%);
+    color: #98a2b3;
+}
+.dark .content .field.is-invalid {
+    border-color: #f97066;
+}
+.dark .content .field.is-invalid:focus {
+    border-color: #f97066;
+    box-shadow: 0 0 0 3px rgb(240 68 56 / 15%);
+}
+.dark .content .field-chevron {
+    color: #98a2b3;
+}
 .dark .content .field::placeholder, .dark .content .search::placeholder { 
     color: rgb(255 255 255 / 30%);
 }
@@ -481,6 +563,9 @@
     .content .table-section { 
         padding: 1.5rem;
     }
+    .content .form-section {
+        padding: 1.5rem;
+    }
     .content .table th, .content .table td { 
         padding-right: 1.5rem;
         padding-left: 1.5rem;
@@ -494,7 +579,7 @@
     .content .form-actions { 
         justify-content: flex-end;
     }
-    .content .form-actions button { 
+    .content .form-actions > * {
         width: auto;
     }
 }

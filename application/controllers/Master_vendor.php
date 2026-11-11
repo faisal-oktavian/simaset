@@ -143,7 +143,7 @@ class Master_vendor extends Admin_Controller
         $page_config = array(
             'title'            => $is_edit ? 'Edit Vendor' : 'Tambah Vendor',
             'page'             => 'master_vendor',
-            'breadcrumb'       => array('Master Data', 'Master Vendor', $is_edit ? 'Edit' : 'Tambah'),
+            'breadcrumb'       => array('Master Data', 'Master Vendor'),
             'breadcrumb_links' => array('master_vendor', 'master_vendor'),
             'page_data'        => $has_error ? array(
                 'swalError'  => 'Periksa kembali isian Anda.',
