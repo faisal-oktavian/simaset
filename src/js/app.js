@@ -2462,6 +2462,29 @@ export function registerApp(Alpine) {
 
   //////////////////////////////////////////////////////////////////////
 
+  /* ------------------------ Master Vendor (CRUD halaman terpisah, pola Supplier) */
+  Alpine.data("vendorList", () =>
+    Object.assign(tableState(), {
+      init() {
+        this.initTable();
+      },
+      remove(id, nama) {
+        return deleteRecord({
+          url: `${baseUrl()}master_vendor/delete/${id}`,
+          nama,
+          label: "vendor",
+          onSuccess: async () => {
+            if (typeof window.__navigateMenu === "function") {
+              await window.__navigateMenu(`${baseUrl()}master_vendor`, false);
+            } else {
+              window.location.reload();
+            }
+          },
+        });
+      },
+    }),
+  );
+    
   /* ------------------------ Master Supplier (CRUD halaman terpisah) */
   Alpine.data("supplierList", () =>
     Object.assign(tableState(), {
@@ -2544,7 +2567,15 @@ document.addEventListener("app:page-updated", () => {
 });
 
 function renderSupplierErrors(errors) {
-  const form = document.getElementById("supplier-form");
+  // const form = document.getElementById("supplier-form");
+  // if (!form || !errors) return;
+
+  // Object.entries(errors).forEach(([field, message]) => {
+  //   const placeholder = form.querySelector(`[data-error-for="${CSS.escape(field)}"]`);
+  //   if (placeholder) placeholder.textContent = message;
+  // });
+
+  const form = document.querySelector("form[data-confirm-save]"); // form Supplier & Vendor
   if (!form || !errors) return;
 
   Object.entries(errors).forEach(([field, message]) => {

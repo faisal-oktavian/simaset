@@ -674,6 +674,9 @@
   .min-w-225 {
     min-width: calc(var(--spacing) * 225);
   }
+  .min-w-250 {
+    min-width: calc(var(--spacing) * 250);
+  }
   .min-w-275\.5 {
     min-width: calc(var(--spacing) * 275.5);
   }
@@ -726,6 +729,9 @@
   }
   .animate-spin {
     animation: var(--animate-spin);
+  }
+  .cursor-not-allowed {
+    cursor: not-allowed;
   }
   .cursor-pointer {
     cursor: pointer;
@@ -3225,7 +3231,7 @@ input:checked + .mb-switch::after {
 }
 .form .select2-container--default .select2-selection--single .select2-selection__rendered {
   width: 100%;
-  padding-left: 1rem;
+  padding-left: 0.5rem;
   padding-right: 3rem;
   color: #1d2939;
   font-size: 0.875rem;

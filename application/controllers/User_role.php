@@ -13,6 +13,7 @@ class User_role extends Admin_Controller
         'master_unit'               => 'Master Unit',
         'master_technical_team'     => 'Master Tim Teknis',
         'master_room'               => 'Master Ruangan',
+        'master_vendor'             => 'Master Vendor',
         'karyawan'                  => 'Master Karyawan',
         'supplier'                  => 'Master Supplier',
         'user'                      => 'User',
