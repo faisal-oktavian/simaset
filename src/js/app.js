@@ -220,6 +220,57 @@ const tableState = () => ({
   },
 });
 
+/* ------------------------------------------------------------------ peta (Leaflet) */
+// Titik tengah peta bila gedung belum punya koordinat. Ubah sesuai lokasi rumah sakit.
+const MAP_DEFAULT_CENTER = [-7.25, 112.75];
+const MAP_DEFAULT_ZOOM = 11;
+const LEAFLET_VERSION = "1.9.4";
+let leafletPromise = null;
+
+// Leaflet dimuat dari CDN hanya saat halaman form gedung dibuka (tidak ikut bundle.js).
+function loadLeaflet() {
+  const base = `https://cdnjs.cloudflare.com/ajax/libs/leaflet/${LEAFLET_VERSION}`;
+  const configureLeaflet = (L) => {
+    L.Icon.Default.imagePath = `${base}/images/`;
+    L.Icon.Default.mergeOptions({
+      iconUrl: "marker-icon.png",
+      iconRetinaUrl: "marker-icon-2x.png",
+      shadowUrl: "marker-shadow.png",
+    });
+    return L;
+  };
+
+  if (window.L) return Promise.resolve(configureLeaflet(window.L));
+  if (leafletPromise) return leafletPromise;
+
+  leafletPromise = new Promise((resolve, reject) => {
+    let cssLoaded = false;
+    let scriptLoaded = false;
+    const done = () => {
+      if (!cssLoaded || !scriptLoaded) return;
+      resolve(configureLeaflet(window.L));
+    };
+    const fail = () => {
+      leafletPromise = null;
+      reject(new Error("Leaflet gagal dimuat"));
+    };
+
+    const css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = `${base}/leaflet.min.css`;
+    css.onload = () => { cssLoaded = true; done(); };
+    css.onerror = fail;
+    document.head.appendChild(css);
+
+    const script = document.createElement("script");
+    script.src = `${base}/leaflet.min.js`;
+    script.onload = () => { scriptLoaded = true; done(); };
+    script.onerror = fail;
+    document.head.appendChild(script);
+  });
+  return leafletPromise;
+}
+
 /* --------------------------------------------------------- Alpine components */
 export function registerApp(Alpine) {
   /* ------------------------ User (DataTables + modal CRUD) */
@@ -2484,6 +2535,170 @@ export function registerApp(Alpine) {
       },
     }),
   );
+
+    /* ------------------------ Master Gedung (CRUD halaman terpisah, pola Supplier) */
+  Alpine.data("buildingList", () =>
+    Object.assign(tableState(), {
+      init() {
+        this.initTable();
+      },
+      remove(id, nama) {
+        return deleteRecord({
+          url: `${baseUrl()}master_building/delete/${id}`,
+          nama,
+          label: "gedung",
+          onSuccess: async () => {
+            if (typeof window.__navigateMenu === "function") {
+              await window.__navigateMenu(`${baseUrl()}master_building`, false);
+            } else {
+              window.location.reload();
+            }
+          },
+        });
+      },
+    }),
+  );
+
+  /* ------------------------ Master Gedung: form dengan pemilih titik di peta (Leaflet + OpenStreetMap) */
+    Alpine.data("buildingForm", () => ({
+    map: null,
+    marker: null,
+    mapLoading: true,
+    mapError: "",
+    locating: false,
+    startLat: NaN,
+    startLng: NaN,
+
+    async init() {
+      // Koordinat awal (mode edit) dibaca dari atribut data-lat/data-lng di elemen x-data.
+      this.startLat = parseFloat(this.$el.dataset.lat);
+      this.startLng = parseFloat(this.$el.dataset.lng);
+      try {
+        await loadLeaflet();
+      } catch (e) {
+        this.mapLoading = false;
+        this.mapError = "Peta tidak dapat dimuat (periksa koneksi internet). Koordinat tetap bisa diisi manual.";
+        return;
+      }
+      this.$nextTick(() => this.initMap());
+    },
+
+    destroy() {
+      if (this.map) {
+        this.map.remove();
+        this.map = null;
+      }
+    },
+
+    initMap() {
+      const L = window.L;
+      let lat = this.startLat;
+      let lng = this.startLng;
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        lat = parseFloat(this.$refs.lat.value);
+        lng = parseFloat(this.$refs.lng.value);
+      }
+      const has = Number.isFinite(lat) && Number.isFinite(lng);
+      if (has) {
+        // pastikan kolom terisi (mode edit)
+        this.$refs.lat.value = lat.toFixed(7);
+        this.$refs.lng.value = lng.toFixed(7);
+      }
+
+      this.map = L.map(this.$refs.map).setView(has ? [lat, lng] : MAP_DEFAULT_CENTER, has ? 17 : MAP_DEFAULT_ZOOM);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+      }).addTo(this.map);
+
+      if (has) this.placeMarker(lat, lng);
+      this.map.on("click", (e) => this.setPoint(e.latlng.lat, e.latlng.lng));
+
+      this.mapLoading = false;
+      // Ukuran kontainer bisa berubah setelah halaman selesai ditampilkan (perpindahan menu parsial):
+      // hitung ulang ukuran lalu arahkan lagi ke titik koordinat.
+      const recenter = () => {
+        if (!this.map) return;
+        this.map.invalidateSize();
+        if (has) this.map.setView([lat, lng], 17);
+      };
+      setTimeout(recenter, 200);
+      setTimeout(recenter, 800);
+    },
+
+    placeMarker(lat, lng) {
+      const L = window.L;
+      if (this.marker) {
+        this.marker.setLatLng([lat, lng]);
+        return;
+      }
+      this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
+      this.marker.on("dragend", () => {
+        const p = this.marker.getLatLng();
+        this.setPoint(p.lat, p.lng, false);
+      });
+    },
+
+    // Isi input dari titik peta (7 digit desimal = sesuai kolom decimal(10,7)).
+    setPoint(lat, lng, pan = true) {
+      lat = Math.max(-90, Math.min(90, lat));
+      lng = ((((lng + 180) % 360) + 360) % 360) - 180; // peta bisa digeser melewati 180 derajat
+      this.$refs.lat.value = lat.toFixed(7);
+      this.$refs.lng.value = lng.toFixed(7);
+      this.clearCoordErrors();
+      if (this.map) {
+        this.placeMarker(lat, lng);
+        if (pan) this.map.panTo([lat, lng]);
+      }
+    },
+
+    // Input diketik manual -> geser penanda ke koordinat itu.
+    syncFromInputs() {
+      const lat = parseFloat(String(this.$refs.lat.value).replace(",", "."));
+      const lng = parseFloat(String(this.$refs.lng.value).replace(",", "."));
+      if (Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180) {
+        this.setPoint(lat, lng);
+        if (this.map) this.map.setView([lat, lng], Math.max(this.map.getZoom(), 17));
+      }
+    },
+
+    clearPoint() {
+      this.$refs.lat.value = "";
+      this.$refs.lng.value = "";
+      this.clearCoordErrors();
+      if (this.marker) {
+        this.marker.remove();
+        this.marker = null;
+      }
+    },
+
+    clearCoordErrors() {
+      ["latitude", "longitude"].forEach((name) => {
+        const p = this.$root.querySelector(`[data-error-for="${name}"]`);
+        if (p) p.textContent = "";
+      });
+    },
+
+    locate() {
+      if (!navigator.geolocation) {
+        toast("error", "Browser tidak mendukung pencarian lokasi.");
+        return;
+      }
+      this.locating = true;
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          this.locating = false;
+          this.setPoint(pos.coords.latitude, pos.coords.longitude);
+          if (this.map) this.map.setView([pos.coords.latitude, pos.coords.longitude], 18);
+        },
+        () => {
+          this.locating = false;
+          toast("error", "Lokasi tidak dapat diambil. Pastikan izin lokasi aktif (butuh HTTPS atau localhost).");
+        },
+        { enableHighAccuracy: true, timeout: 10000 },
+      );
+    },
+  }));
     
   /* ------------------------ Master Supplier (CRUD halaman terpisah) */
   Alpine.data("supplierList", () =>

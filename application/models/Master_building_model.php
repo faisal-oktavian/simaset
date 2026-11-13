@@ -22,7 +22,7 @@ class Master_building_model extends CI_Model
         $this->db->where('id' . $this->table . '', (int) $id);
         $this->db->where('status', 1);
         $this->db->limit(1);
-        $this->db->select('idmaster_building, building_code, building_name, description_building, is_active');
+        $this->db->select('idmaster_building, building_code, building_name, latitude, longitude, description_building, is_active');
         $master_building = $this->db->get($this->table);
         // echo "<pre>"; print_r($this->db->last_query());die;
 
