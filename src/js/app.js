@@ -2536,7 +2536,7 @@ export function registerApp(Alpine) {
     }),
   );
 
-    /* ------------------------ Master Gedung (CRUD halaman terpisah, pola Supplier) */
+  /* ------------------------ Master Gedung (CRUD halaman terpisah, pola Supplier) */
   Alpine.data("buildingList", () =>
     Object.assign(tableState(), {
       init() {
@@ -2560,7 +2560,7 @@ export function registerApp(Alpine) {
   );
 
   /* ------------------------ Master Gedung: form dengan pemilih titik di peta (Leaflet + OpenStreetMap) */
-    Alpine.data("buildingForm", () => ({
+  Alpine.data("buildingForm", () => ({
     map: null,
     marker: null,
     mapLoading: true,
@@ -2697,6 +2697,74 @@ export function registerApp(Alpine) {
         },
         { enableHighAccuracy: true, timeout: 10000 },
       );
+    },
+  }));
+
+    /* ------------------------ Master Barang (CRUD halaman terpisah, pola Supplier) */
+  Alpine.data("productList", () =>
+    Object.assign(tableState(), {
+      init() {
+        this.initTable();
+      },
+      remove(id, nama) {
+        return deleteRecord({
+          url: `${baseUrl()}master_product/delete/${id}`,
+          nama,
+          label: "barang",
+          onSuccess: async () => {
+            if (typeof window.__navigateMenu === "function") {
+              await window.__navigateMenu(`${baseUrl()}master_product`, false);
+            } else {
+              window.location.reload();
+            }
+          },
+        });
+      },
+    }),
+  );
+
+  /* ------------------------ Master Barang: form dengan dropdown select2 (Kategori & KIB) */
+  Alpine.data("productForm", () => ({
+    init() {
+      this.$nextTick(() => this.initSelect2());
+    },
+
+    // Semua <select data-select2> di form ini dijadikan dropdown yang bisa dicari.
+    // Form ini halaman penuh (bukan modal), jadi tidak perlu dropdownParent.
+    initSelect2() {
+      [
+        this.$refs.form.elements["idmaster_category_product"],
+        this.$refs.form.elements["idmaster_kib"],
+      ].forEach((el) => {
+        const $el = $(el);
+        $el.select2({
+          width: "100%",
+          placeholder: $el.data("placeholder") || "Pilih...",
+          allowClear: true,
+          minimumResultsForSearch: 0,
+          language: {
+            noResults: () => "Data tidak ditemukan",
+            searching: () => "Mencari...",
+          },
+        });
+
+        if (el.dataset.invalid) {
+          $el.next(".select2-container").find(".select2-selection").addClass("select2-invalid");
+        }
+
+        $el.on("change", () => {
+          const p = this.$refs.form.querySelector(`[data-error-for="${el.name}"]`);
+          if (p) p.textContent = "";
+          $el.next(".select2-container").find(".select2-selection").removeClass("select2-invalid");
+        });
+      });
+    },
+
+    destroy() {
+      ["idmaster_category_product", "idmaster_kib"].forEach((name) => {
+        const $el = $(this.$refs.form.elements[name]);
+        if ($el.data("select2")) $el.select2("destroy");
+      });
     },
   }));
     

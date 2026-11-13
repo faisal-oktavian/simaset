@@ -686,6 +686,9 @@
   .min-w-225 {
     min-width: calc(var(--spacing) * 225);
   }
+  .min-w-275 {
+    min-width: calc(var(--spacing) * 275);
+  }
   .min-w-275\.5 {
     min-width: calc(var(--spacing) * 275.5);
   }
@@ -1984,6 +1987,9 @@
   }
   .dark\:text-brand-300:is(.dark *) {
     color: var(--color-brand-300);
+  }
+  .dark\:text-brand-400:is(.dark *) {
+    color: var(--color-brand-400);
   }
   .dark\:text-error-500:is(.dark *) {
     color: var(--color-error-500);

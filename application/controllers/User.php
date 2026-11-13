@@ -19,6 +19,7 @@ class User extends Admin_Controller
         'master_room',
         'master_vendor',
         'master_building',
+        'master_product',
         'karyawan', 
         'supplier', 
         'user', 
